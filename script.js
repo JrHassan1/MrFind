@@ -1,6 +1,6 @@
 const ADMIN_CODE = "2007";
 
-// تحميل المنتجات من الذاكرة المحلية أو استخدام القائمة الافتراضية
+// 1. قاعدة البيانات (تحميل من الذاكرة أو القائمة الافتراضية)
 let products = JSON.parse(localStorage.getItem("products")) || [
     { name: "Pringles", code: "QTR1001", cat: "Snacks", aisle: "2", floor: "1", img: "images/pringles.webp" },
     { name: "Water Alshamal", code: "QTR1002", cat: "Drinks", aisle: "2", floor: "1", img: "images/water.webp" },
@@ -13,31 +13,30 @@ let products = JSON.parse(localStorage.getItem("products")) || [
 const grid = document.getElementById("productGrid");
 const search = document.getElementById("searchInput");
 
-// دالة لحفظ المنتجات في ذاكرة المتصفح
+// دالة الحفظ
 function saveProducts() {
     localStorage.setItem("products", JSON.stringify(products));
 }
 
-// دالة عرض المنتجات في الصفحة
+// 2. دالة عرض المنتجات
 function renderProducts(list) {
     grid.innerHTML = "";
     list.forEach(p => {
         const card = document.createElement("div");
         card.className = "card";
         card.innerHTML = `
-            <img src="${p.img}">
+            <img src="${p.img}" onerror="this.src='https://via.placeholder.com/150?text=No+Image'">
             <h3>${p.name}</h3>
             <p>القسم: ${p.cat}</p>
-            <p>الممر: ${p.aisle}</p>
-            <p>الطابق: ${p.floor}</p>
-            <p>Barcode: ${p.code}</p>
+            <p>الممر: ${p.aisle} | الطابق: ${p.floor}</p>
+            <p><strong>Barcode: ${p.code}</strong></p>
             <button onclick="deleteProduct('${p.code}')" style="background:#dc3545; color:white; border:none; padding:8px; border-radius:5px; cursor:pointer; width:100%; margin-top:10px;">حذف المنتج</button>
         `;
         grid.appendChild(card);
     });
 }
 
-// دالة الحذف
+// 3. دالة الحذف
 function deleteProduct(barcode) {
     if (confirm("هل أنت متأكد من حذف هذا المنتج؟")) {
         products = products.filter(p => p.code !== barcode);
@@ -46,10 +45,7 @@ function deleteProduct(barcode) {
     }
 }
 
-// تشغيل العرض الأولي
-renderProducts(products);
-
-// برمجة شريط البحث
+// 4. محرك البحث
 search.addEventListener("input", () => {
     const q = search.value.toLowerCase();
     const filtered = products.filter(p =>
@@ -60,41 +56,37 @@ search.addEventListener("input", () => {
     renderProducts(filtered);
 });
 
-// فتح لوحة الإدارة
+// 5. لوحة الإدارة
 function openAdmin() {
-    const code = prompt("Admin Code");
+    const code = prompt("أدخل كود المسؤول:");
     if (code === ADMIN_CODE) {
         document.getElementById("adminPanel").style.display = "block";
+        window.scrollTo(0, document.body.scrollHeight);
     } else {
         alert("كود خاطئ");
     }
 }
 
-// إضافة منتج جديد
 function addProduct() {
     const name = document.getElementById("prodName").value;
     const code = document.getElementById("prodCode").value;
     const cat = document.getElementById("prodCat").value;
     const aisle = document.getElementById("prodAisle").value;
     const floor = document.getElementById("prodFloor").value;
-    const imgInput = document.getElementById("prodImg").value;
-
-    const img = imgInput || "images/default.png";
+    const img = document.getElementById("prodImg").value || "images/default.png";
 
     if (name && code) {
         products.push({ name, code, cat, aisle, floor, img });
         saveProducts();
         renderProducts(products);
-        alert("تم إضافة المنتج بنجاح");
-        
-        // مسح الخانات بعد الإضافة
-        document.querySelectorAll("#adminPanel input").forEach(input => input.value = "");
+        alert("تمت الإضافة بنجاح!");
+        document.querySelectorAll("#adminPanel input").forEach(i => i.value = "");
     } else {
-        alert("يرجى إدخال اسم المنتج والباركود على الأقل");
+        alert("يرجى تعبئة الاسم والباركود");
     }
 }
 
-// --- كود الماسح الضوئي (QR Scanner) ---
+// 6. الكاميرا الحقيقية (الماسح الضوئي)
 let html5QrCode;
 
 function startScan() {
@@ -103,18 +95,18 @@ function startScan() {
     document.getElementById("scanBtn").style.display = "none";
 
     html5QrCode = new Html5Qrcode("reader");
-    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+    const config = { fps: 15, qrbox: { width: 250, height: 150 } };
 
     html5QrCode.start(
-        { facingMode: "environment" },
+        { facingMode: "environment" }, 
         config,
         (decodedText) => {
-            document.getElementById("searchInput").value = decodedText;
-            search.dispatchEvent(new Event('input')); // تحديث البحث تلقائياً
+            search.value = decodedText;
+            search.dispatchEvent(new Event('input'));
             stopScan();
-            alert("تم قراءة الباركود: " + decodedText);
+            alert("تم العثور على الباركود: " + decodedText);
         },
-        (errorMessage) => { /* تجاهل أخطاء المسح المؤقتة */ }
+        (errorMessage) => {}
     ).catch((err) => {
         alert("خطأ في تشغيل الكاميرا: " + err);
     });
@@ -129,3 +121,6 @@ function stopScan() {
         });
     }
 }
+
+// تشغيل العرض عند البدء
+renderProducts(products);
