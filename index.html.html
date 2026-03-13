@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Supermarket Finder</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🛒 Supermarket Product Finder</h1>
+
+<div class="controls">
+<input type="text" id="searchInput" placeholder="ابحث عن منتج أو باركود...">
+<button onclick="fakeScan()">📷 مسح باركود</button>
+<button onclick="openAdmin()">🔐 الإدارة</button>
+</div>
+
+<p id="resultsCount"></p>
+
+<div class="products" id="productGrid"></div>
+
+<div id="adminPanel">
+
+<h2>لوحة الإدارة</h2>
+
+<input id="prodName" placeholder="اسم المنتج">
+<input id="prodCode" placeholder="الباركود">
+<input id="prodCat" placeholder="القسم">
+<input id="prodAisle" placeholder="الممر">
+<input id="prodFloor" placeholder="الطابق">
+<input id="prodImg" placeholder="رابط الصورة">
+
+<button onclick="addProduct()">إضافة منتج</button>
+
+</div>
+
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
