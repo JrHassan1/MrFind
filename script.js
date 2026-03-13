@@ -94,5 +94,49 @@ saveProducts();
 renderProducts(products);
 
 alert("تم إضافة المنتج");
+let html5QrCode;
 
+function startScan() {
+    // إظهار حاوية الكاميرا والأزرار
+    document.getElementById("reader").style.display = "block";
+    document.getElementById("stopBtn").style.display = "inline-block";
+    document.getElementById("scanBtn").style.display = "none";
+
+    html5QrCode = new Html5Qrcode("reader");
+    
+    const config = { fps: 10, qrbox: { width: 250, height: 150 } };
+
+    html5QrCode.start(
+        { facingMode: "environment" }, // استخدام الكاميرا الخلفية
+        config,
+        (decodedText) => {
+            // ماذا يحدث عند قراءة الباركود بنجاح:
+            document.getElementById("searchInput").value = decodedText;
+            
+            // تشغيل الفلترة تلقائياً
+            search.dispatchEvent(new Event('input'));
+            
+            // إيقاف الكاميرا بعد القراءة لراحة المستخدم
+            stopScan();
+            
+            // تنبيه بسيط (اختياري)
+            alert("تم قراءة الباركود: " + decodedText);
+        },
+        (errorMessage) => {
+            // خطأ في القراءة (يتم تجاهله لكي يستمر المسح)
+        }
+    ).catch((err) => {
+        alert("خطأ في تشغيل الكاميرا: " + err);
+    });
+}
+
+function stopScan() {
+    if (html5QrCode) {
+        html5QrCode.stop().then(() => {
+            document.getElementById("reader").style.display = "none";
+            document.getElementById("stopBtn").style.display = "none";
+            document.getElementById("scanBtn").style.display = "inline-block";
+        });
+    }
+}
 }
