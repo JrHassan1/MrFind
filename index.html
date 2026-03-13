@@ -1,42 +1,44 @@
 <!DOCTYPE html>
-<html lang="ar">
+<html lang="ar" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Supermarket Finder</title>
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supermarket Finder</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/html5-qrcode"></script>
 </head>
 
 <body>
 
 <div class="container">
 
-<h1>🛒 Supermarket Product Finder</h1>
+    <h1>🛒 Supermarket Product Finder</h1>
 
-<div class="controls">
-<input type="text" id="searchInput" placeholder="ابحث عن منتج أو باركود...">
-<button onclick="fakeScan()">📷 مسح باركود</button>
-<button onclick="openAdmin()">🔐 الإدارة</button>
-</div>
+    <div class="controls">
+        <input type="text" id="searchInput" placeholder="ابحث عن منتج أو باركود...">
+        <button id="scanBtn" onclick="startScan()">📷 فتح الماسح</button>
+        <button id="stopBtn" onclick="stopScan()" style="display:none; background: #dc3545;">إيقاف الكاميرا</button>
+        <button onclick="openAdmin()">🔐 الإدارة</button>
+    </div>
 
-<p id="resultsCount"></p>
+    <div id="reader" style="width: 100%; border-radius: 15px; overflow: hidden; margin-bottom: 20px; display: none;"></div>
 
-<div class="products" id="productGrid"></div>
+    <p id="resultsCount"></p>
 
-<div id="adminPanel">
+    <div class="products" id="productGrid"></div>
 
-<h2>لوحة الإدارة</h2>
-
-<input id="prodName" placeholder="اسم المنتج">
-<input id="prodCode" placeholder="الباركود">
-<input id="prodCat" placeholder="القسم">
-<input id="prodAisle" placeholder="الممر">
-<input id="prodFloor" placeholder="الطابق">
-<input id="prodImg" placeholder="رابط الصورة">
-
-<button onclick="addProduct()">إضافة منتج</button>
-
-</div>
+    <div id="adminPanel" style="display: none;">
+        <h2>لوحة الإدارة</h2>
+        <div style="display: grid; gap: 10px;">
+            <input id="prodName" placeholder="اسم المنتج">
+            <input id="prodCode" placeholder="الباركود">
+            <input id="prodCat" placeholder="القسم">
+            <input id="prodAisle" placeholder="الممر">
+            <input id="prodFloor" placeholder="الطابق">
+            <input id="prodImg" placeholder="رابط الصورة">
+            <button onclick="addProduct()" style="background: #28a745;">✅ إضافة المنتج للقائمة</button>
+        </div>
+    </div>
 
 </div>
 
@@ -44,5 +46,3 @@
 
 </body>
 </html>
-
-
